@@ -13,57 +13,70 @@ import android.view.View
 import android.view.ViewGroup
 
 class PaintView : View {
-    var params:ViewGroup.LayoutParams? = null
+    var params: ViewGroup.LayoutParams? = null
+
     companion object {
         var pathList = ArrayList<Path>() //pathList ,whatever we draw on layout it trace path
-        var colorList=ArrayList<Int>()
-        var currentBrush=Color.BLACK
+        var colorList = ArrayList<Int>()
+        var currentBrush = Color.BLACK
     }
-    constructor(context: Context) : this(context, null){
-         init()
+
+    constructor(context: Context) : this(context, null) {
+        init()
     }
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0){
-      init()
+
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0) {
+        init()
     }
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr){
-       init()
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init()
     }
-     private fun init(){
-         paintBrush.isAntiAlias = true
-         paintBrush.color = currentBrush
-         paintBrush.style=Paint.Style.STROKE
-         paintBrush.strokeJoin=Paint.Join.ROUND
-         paintBrush.strokeWidth=8f
-         params=ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-     }
+
+    private fun init() {
+        paintBrush.isAntiAlias = true
+        paintBrush.color = currentBrush
+        paintBrush.style = Paint.Style.STROKE
+        paintBrush.strokeJoin = Paint.Join.ROUND
+        paintBrush.strokeWidth = 8f
+        params = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        var x= event.x       //for pointing out where is the hand on x axis
-        var y=event.y
+        super.onTouchEvent(event)
 
-        when(event.action){
-            MotionEvent.ACTION_DOWN ->{
-                path.moveTo(x,y)
+        val x = event.x       //for pointing out where is the hand on x axis
+        val y = event.y
+
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                path.moveTo(x, y)
                 return true
             }
-            MotionEvent.ACTION_MOVE ->{
-                path.lineTo(x,y)
+            MotionEvent.ACTION_MOVE -> {
+                path.lineTo(x, y)
                 pathList.add(path)
                 colorList.add(currentBrush)
             }
-          else -> return false
+            else -> return false
         }
         postInvalidate()
         return false
     }
 
     override fun onDraw(canvas: Canvas) {
-        for(i in pathList.indices)
-        {
-            paintBrush.setColor(colorList[i])
+        for (i in pathList.indices) {
+            paintBrush.color = colorList[i]
             canvas.drawPath(pathList[i], paintBrush)
             invalidate()
         }
     }
-                                        //to drawing on screen
+    //to drawing on screen
 }
